@@ -3,9 +3,17 @@ import config from '../../config/index.json';
 
 const BASE_URL = `${config.apiBase}/${config.apiKey}/`;
 
-const productService = {};
+export const MAP_KEY = Symbol('MAP_KEY');
 
-export default productService;
+const products = {
+  [MAP_KEY]: new Map(),
+
+  getProduct(id) {
+    return products[MAP_KEY].get(id);
+  },
+};
+
+export default products;
 
 export const fetchProducts = (pageNumber, pageCount) => fetch(
   `${BASE_URL}/${pageNumber}/${pageCount}`
