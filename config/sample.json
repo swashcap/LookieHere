@@ -1,0 +1,5 @@
+/* Copy to 'index.json', add secrets, and remove this comment */
+{
+  "apiKey": "my-api-key",
+  "apiBase": "https://my.api-server.com/path/to/base"
+}
