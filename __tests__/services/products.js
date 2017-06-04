@@ -78,5 +78,9 @@ describe('get products', () => {
     ).toBe(mockProducts[0]);
     expect(products.getProduct('bogus-id')).toBeUndefined();
   });
+
+  test('gets all products', () => {
+    expect(products.getProducts()).toEqual(mockProducts);
+  });
 });
 

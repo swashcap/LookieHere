@@ -11,6 +11,10 @@ const products = {
   getProduct(id) {
     return products[MAP_KEY].get(id);
   },
+
+  getProducts() {
+    return Array.from(products[MAP_KEY].values());
+  },
 };
 
 export default products;
