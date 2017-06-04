@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+
+import LoadingScreen from './components/LoadingScreen';
 
 export default class App extends Component {
   render() {
     return (
-      <View>
-        <Text>LookieHere</Text>
-      </View>
+      <LoadingScreen />
     );
   }
 }

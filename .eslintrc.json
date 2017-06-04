@@ -1,7 +1,11 @@
 {
+  "env": {
+    "jest/globals": true
+  },
   "extends": "airbnb",
   "plugins": [
     "react",
+    "jest",
     "jsx-a11y",
     "import"
   ],
@@ -13,6 +17,7 @@
       "exports": "always-multiline",
       "functions": "never"
     }],
+    "jsx-a11y/accessible-emoji": [0],
     "react/jsx-filename-extension": [0],
     "react/prefer-stateless-function": [0]
   }
