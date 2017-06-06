@@ -1,23 +1,18 @@
-/* global fetch */
-import config from '../../config/index.json';
+import fetchProducts from './fetch-products';
 
-const BASE_URL = `${config.apiBase}/${config.apiKey}/`;
+export const CURRENT_REQUEST = Symbol('CURRENT_REQUEST');
+export const LAST_REQUEST_PAGE = Symbol('LAST_REQUEST_PAGE');
+export const LAST_RESPONSE_META = Symbol('LAST_RESPONSE_META');
+export const PRODUCTS = Symbol('PRODUCTS');
 
-export const MAP_KEY = Symbol('MAP_KEY');
-
-const products = {
-  [MAP_KEY]: new Map(),
-
-  getProduct(id) {
-    return products[MAP_KEY].get(id);
-  },
-
-  getProducts() {
-    return Array.from(products[MAP_KEY].values());
-  },
+const productsService = {
+  [CURRENT_REQUEST]: null,
+  [LAST_REQUEST_PAGE]: 0,
+  [LAST_RESPONSE_META]: null,
+  [PRODUCTS]: new Map(),
 };
 
-export default products;
+export default productsService;
 
 export const fetchProducts = (pageNumber, pageCount) => fetch(
   `${BASE_URL}/${pageNumber}/${pageCount}`
@@ -31,4 +26,8 @@ export const fetchProducts = (pageNumber, pageCount) => fetch(
 
     return response.json();
   });
+
+export const getProduct = id => productsService[PRODUCTS].get(id);
+
+export const getProducts = () => Array.from(productsService[PRODUCTS].values());
 
