@@ -14,20 +14,45 @@ const productsService = {
 
 export default productsService;
 
-export const fetchProducts = (pageNumber, pageCount) => fetch(
-  `${BASE_URL}/${pageNumber}/${pageCount}`
-)
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(
-        `Products fetch error ${response.status}: ${response.statusText}`
-      );
-    }
-
-    return response.json();
-  });
-
 export const getProduct = id => productsService[PRODUCTS].get(id);
 
 export const getProducts = () => Array.from(productsService[PRODUCTS].values());
+
+export const hasLoadedAllProducts = () => !!(
+  productsService[LAST_RESPONSE_META] &&
+  productsService[PRODUCTS].size &&
+  productsService[LAST_RESPONSE_META].totalProducts <=
+    productsService[PRODUCTS].size
+);
+
+/**
+ * Load the next page of products.
+ *
+ * @returns {Promise<Array,Error>}
+ */
+export const loadProducts = () => {
+  if (productsService[CURRENT_REQUEST]) {
+    return productsService[CURRENT_REQUEST];
+  } else if (hasLoadedAllProducts()) {
+    return Promise.resolve([]);
+  }
+
+  productsService[CURRENT_REQUEST] = fetchProducts(
+    productsService[LAST_REQUEST_PAGE] + 1,
+    30
+  )
+    .then(({ pageNumber, products, totalProducts }) => {
+      productsService[LAST_RESPONSE_META] = { pageNumber, totalProducts };
+      productsService[CURRENT_REQUEST] = null;
+      productsService[LAST_REQUEST_PAGE] += 1;
+
+      products.forEach((product) => {
+        productsService[PRODUCTS].set(product.productId, product);
+      });
+
+      return products;
+    });
+
+  return productsService[CURRENT_REQUEST];
+};
 
