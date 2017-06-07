@@ -1,6 +1,13 @@
 [{
-  "productId": 1,
-  "productName": "Test product 1"
+  "productId": "101",
+  "productName": "Wednesday Morning at Five O’Clock - As the Day Begins",
+  "shortDescription": "Silently closing her bedroom door. Leaving the note that she hoped would say more",
+  "longDescription": "<p>She goes downstairs to the kitchen</p>\n<ul>\n\t<li>Clutching her handkerchief</li>\n\t<li>Quietly turning the backdoor key</li>\n\t<li>Stepping outside, she is free</li>\n</ul>\n<p>She(we gave her most of our lives).</p>\n<p>Is leaving (sacrificed most of our lives)</p>\n<p>Home (we gave her everything money could buy)</p>\n<p>She's leaving home, after living alone, for so many years (bye bye)</p>",
+  "price": "$5.00",
+  "productImage": "https://placekitten.com/400/400?image=2",
+  "reviewRating": 5.0,
+  "reviewCount": 5,
+  "inStock": true
 }, {
   "productId": 2,
   "productName": "Test product 2"
