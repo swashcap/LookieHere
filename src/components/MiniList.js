@@ -10,6 +10,7 @@ import {
 
 import listBackground from '../images/list-background.png';
 import Mini from './Mini';
+import MiniListFooter from './MiniListFooter';
 import MiniListLoading from './MiniListLoading';
 
 const styles = StyleSheet.create({
@@ -23,6 +24,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'cyan',
     flex: 1,
     position: 'relative',
+  },
+  footer: {
   },
   list: {
   },
@@ -97,9 +100,14 @@ export default class MiniList extends Component {
   }
 
   renderFooter() {
-    return this.props.isLoading ?
-      <MiniListLoading /> :
-      undefined;
+    const loading = this.props.isLoading ? <MiniListLoading /> : undefined;
+
+    return (
+      <View style={styles.footer}>
+        {loading}
+        <MiniListFooter />
+      </View>
+    );
   }
 
   renderRow(rowData, sectionId, rowId, highlightRow) {
