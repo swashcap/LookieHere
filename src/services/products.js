@@ -14,7 +14,25 @@ const productsService = {
 
 export default productsService;
 
-export const getProduct = id => productsService[PRODUCTS].get(id);
+export const getProduct = (id) => {
+  const product = productsService[PRODUCTS].get(id);
+
+  if (!product) {
+    return product;
+  }
+
+  // TODO: Account for bad id/key index lookups?
+  const keys = Array.from(productsService[PRODUCTS].keys());
+  const idKeyIndex = keys.indexOf(id);
+
+  return Object.assign(
+    {
+      nextProductId: keys[idKeyIndex + 1],
+      previousProductId: keys[idKeyIndex - 1],
+    },
+    product
+  );
+};
 
 export const getProducts = () => Array.from(productsService[PRODUCTS].values());
 

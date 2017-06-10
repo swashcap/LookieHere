@@ -2,7 +2,7 @@
   "productId": "101",
   "productName": "Wednesday Morning at Five O’Clock - As the Day Begins",
   "shortDescription": "Silently closing her bedroom door. Leaving the note that she hoped would say more.",
-  "longDescription": "<p>She goes downstairs to the kitchen</p>\n<ul>\n\t<li>Clutching her handkerchief</li>\n\t<li>Quietly turning the backdoor key</li>\n\t<li>Stepping outside, she is free</li>\n</ul>\n<p>She(we gave her most of our lives).</p>\n<p>Is leaving (sacrificed most of our lives)</p>\n<p>Home (we gave her everything money could buy)</p>\n<p>She's leaving home, after living alone, for so many years (bye bye)</p>",
+  "longDescription": "\u003cp style=\"font-size: 13px;\"\u003eShe goes downstairs to the kitchen\u003c/p\u003e\n\u003cul\u003e\n\t\u003cli\u003eClutching her handkerchief\u003c/li\u003e\n\t\u003cli\u003eQuietly turning the backdoor key\u003c/li\u003e\n\t\u003cli\u003eStepping outside, she is free\u003c/li\u003e\n\u003c/ul\u003e\n\u003cp\u003eShe(we gave her most of our lives).\u003c/p\u003e\n\u003cp\u003eIs leaving (sacrificed most of our lives)\u003c/p\u003e\n\u003cp\u003eHome (we gave her everything money could buy)\u003c/p\u003e\n\u003cp\u003eShe's leaving home, after living alone, for so many years (bye bye)\u003c/p\u003e",
   "price": "$5.00",
   "productImage": "https://placekitten.com/400/400?image=2",
   "reviewRating": 5.0,
@@ -12,10 +12,30 @@
   "productId": "102",
   "productName": "Father Snores as His Wife Gets Into Her Dressing Gown",
   "shortDescription": "Picks up the letter that's lying there. Standing alone at the top of the stairs.",
-  "longDescription": "<p>She breaks down and cries to her husband. \"Daddy, our baby's gone.\"\n<p>\"Why would she treat us so thoughtlessly? How could she do this to me?\"</p>",
+  "longDescription": "\u003cp\u003eShe breaks down and cries to her husband. \"Daddy, our baby's gone.\"\n\u003cp\u003e\"Why would she treat us so thoughtlessly? How could she do this to me?\"\u003c/p\u003e",
   "price": "$1000.00",
   "productImage": "https://placekitten.com/400/400?image=4",
   "reviewRating": 2.5,
   "reviewCount": 10,
+  "inStock": false
+}, {
+  "productId": "103",
+  "productName": "Friday Morning - At Nine O'Clock",
+  "shortDescription": "She is far away. Waiting to keep the appointment she made.",
+  "longDescription": "\u003cp\u003eMeeting a man from the Motortrade.\u003c/p\u003e\u003cp\u003eShe (what did we do that was wrong)\u003c/p\u003e\u003cp\u003eIs Having (we didn't know it was wrong)\u003c/p\u003e\u003cp\u003eFun (fun is the one thing that money can't buy)\u003c/p\u003e",
+  "price": "$90.00",
+  "productImage": "https://placekitten.com/400/400?image=9",
+  "reviewRating": 4.5,
+  "reviewCount": 9,
+  "inStock": false
+}, {
+  "productId": "104",
+  "productName": "Being for the Benefit of Mr. Kite!",
+  "shortDescription": "For the benefit of Mr. Kite. There will be a show tonight on trampoline",
+  "longDescription": "\u003cp\u003eThe Hendersons will all be there:\u003c/p\u003e\u003cul\u003e\u003cli\u003eLate of Pablo Fanques Fair-what a scene\u003c/li\u003e\u003cli\u003eOver men and horses hoops and garters\u003c/li\u003e\u003cli\u003eLastly through a hogshead of real fire!\u003c/li\u003e\u003cli\u003eIn this way Mr. K. will challenge the world!\u003c/li\u003e\u003c/ul\u003e",
+  "price": "$1060.00",
+  "productImage": "https://placekitten.com/400/400?image=16",
+  "reviewRating": 1.6,
+  "reviewCount": 16,
   "inStock": false
 }]

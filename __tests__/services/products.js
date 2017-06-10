@@ -26,7 +26,13 @@ describe('get products', () => {
   afterEach(removeMockProducts);
 
   test('gets single product', () => {
-    expect(getProduct(mockProducts[0].productId)).toBe(mockProducts[0]);
+    expect(getProduct(mockProducts[1].productId)).toEqual(Object.assign(
+      {
+        nextProductId: mockProducts[2].productId,
+        previousProductId: mockProducts[0].productId,
+      },
+      mockProducts[1]
+    ));
     expect(getProduct('bogus-id')).toBeUndefined();
   });
 
