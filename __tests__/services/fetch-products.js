@@ -37,13 +37,12 @@ describe('fetchs products from API', () => {
     });
   });
   test('returns products', () => {
-    expect.assertions(3);
+    expect.assertions(2);
 
     return fetchProducts(2, 30).then((response) => {
       const arg = global.fetch.mock.calls[global.fetch.mock.calls.length - 1][0];
 
-      expect(arg).toMatch(new RegExp(`${config.apiBase}.*${config.apiKey}`));
-      expect(arg).toMatch(/2\/30$/);
+      expect(arg).toBe(`${config.apiBase}/${config.apiKey}/2/30`);
       expect(response.products).toBe(mockProducts);
     });
   });
