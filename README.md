@@ -47,6 +47,23 @@ $ react-native run-ios
 
 …this opens LookieHere in the iOS Simulator.
 
+## Development Server
+
+This project contains a development server for testing the application without making requests to an external server. To set up, ensure your _config/index.json_ has a `localhost` hostname and open port on your machine. An example:
+
+```json
+{
+  "apiKey": "my-api-key",
+  "apiBase": "http://localhost:3000/path/to/base"
+}
+```
+
+The server mimics the API's expected responses, but with random field values supplied by [Chance.js](http://chancejs.com). To run the server:
+
+```shell
+$ npm run server
+```
+
 ## License
 
 MIT. See [LICENSE](./LICENSE) for details.
