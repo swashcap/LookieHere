@@ -13,6 +13,8 @@ import Mini from './Mini';
 import MiniListFooter from './MiniListFooter';
 import MiniListLoading from './MiniListLoading';
 
+const SCROLL_VIEW_REF = 'SCROLL_VIEW_REF';
+
 const styles = StyleSheet.create({
   backgroundImage: {
     height: '100%',
@@ -91,6 +93,21 @@ export default class MiniList extends Component {
     this.renderRow = this.renderRow.bind(this);
   }
 
+  componentDidMount() {
+    const { initialScrollOffset } = this.props;
+
+    /* eslint-disable react/no-string-refs */
+    if (initialScrollOffset && this.refs[SCROLL_VIEW_REF]) {
+      this.refs[SCROLL_VIEW_REF].scrollTo({
+        animated: false,
+        x: 0,
+        y: initialScrollOffset,
+      });
+    }
+    /* eslint-enable react/no-string-refs */
+  }
+
+
   componentWillReceiveProps(nextProps) {
     if (this.props.products.length !== nextProps.products.length) {
       this.setState({
@@ -134,6 +151,7 @@ export default class MiniList extends Component {
         <ListView
           dataSource={this.state.dataSource}
           onEndReached={this.props.onEndReached}
+          ref={SCROLL_VIEW_REF}
           renderFooter={this.renderFooter}
           renderRow={this.renderRow}
           renderSeparator={MiniList.renderSeparator}
@@ -144,7 +162,12 @@ export default class MiniList extends Component {
   }
 }
 
+MiniList.defaultProps = {
+  initialScrollOffset: 0,
+};
+
 MiniList.propTypes = {
+  initialScrollOffset: PropTypes.number,
   isLoading: PropTypes.bool.isRequired,
   onEndReached: PropTypes.func.isRequired,
   onProductPress: PropTypes.func.isRequired,
