@@ -14,6 +14,25 @@ const productsService = {
 
 export default productsService;
 
+/**
+ * Get products' ordered IDs.
+ *
+ * @returns {string[]}
+ */
+const getIds = () => Array.from(productsService[PRODUCTS].keys());
+
+/**
+ * Get product's index by ID.
+ *
+ * @param {string} id
+ * @param {string[]} [ids] Collection of ordered IDs to iterate through.
+ * Defaults to the products map's IDs.
+ * @returns {number}
+ */
+export const getProductIndex = (id, ids) => (
+  (!Array.isArray(ids) ? getIds() : ids).indexOf(id)
+);
+
 export const getProduct = (id) => {
   const product = productsService[PRODUCTS].get(id);
 
@@ -22,13 +41,13 @@ export const getProduct = (id) => {
   }
 
   // TODO: Account for bad id/key index lookups?
-  const keys = Array.from(productsService[PRODUCTS].keys());
-  const idKeyIndex = keys.indexOf(id);
+  const ids = getIds();
+  const idKeyIndex = getProductIndex(id, ids);
 
   return Object.assign(
     {
-      nextProductId: keys[idKeyIndex + 1],
-      previousProductId: keys[idKeyIndex - 1],
+      nextProductId: ids[idKeyIndex + 1],
+      previousProductId: ids[idKeyIndex - 1],
     },
     product
   );

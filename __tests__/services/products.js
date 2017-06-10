@@ -4,6 +4,7 @@ import
   {
     CURRENT_REQUEST,
     getProduct,
+    getProductIndex,
     getProducts,
     hasLoadedAllProducts,
     LAST_RESPONSE_META,
@@ -24,6 +25,10 @@ const removeMockProducts = () => productsService[PRODUCTS].clear();
 describe('get products', () => {
   beforeEach(addMockProducts);
   afterEach(removeMockProducts);
+
+  test('gets product index', () => {
+    expect(getProductIndex(mockProducts[3].productId)).toBe(3);
+  });
 
   test('gets single product', () => {
     expect(getProduct(mockProducts[1].productId)).toEqual(Object.assign(
