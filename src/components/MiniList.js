@@ -150,6 +150,7 @@ export default class MiniList extends Component {
         <View style={styles.top} />
         <ListView
           dataSource={this.state.dataSource}
+          enableEmptySections
           onEndReached={this.props.onEndReached}
           ref={SCROLL_VIEW_REF}
           renderFooter={this.renderFooter}
