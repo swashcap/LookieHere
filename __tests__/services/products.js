@@ -11,6 +11,8 @@ import
     loadProducts,
     PRODUCTS,
     sanitizeProduct,
+    getNextProductId,
+    getPreviousProductId,
   }
 from '../../src/services/products';
 
@@ -44,6 +46,13 @@ describe('get products', () => {
 
   test('gets all products', () => {
     expect(getProducts()).toEqual(mockProducts);
+  });
+
+  test('ordered product IDs', () => {
+    expect(getNextProductId(mockProducts[1].productId))
+      .toBe(mockProducts[2].productId);
+    expect(getPreviousProductId(mockProducts[1].productId))
+      .toBe(mockProducts[0].productId);
   });
 
   test('sanitizes product values', () => {

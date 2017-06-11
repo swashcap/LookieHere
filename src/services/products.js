@@ -33,6 +33,32 @@ export const getProductIndex = (id, ids) => (
   (!Array.isArray(ids) ? getIds() : ids).indexOf(id)
 );
 
+/**
+ * Get next product's ID.
+ *
+ * @param {string} id
+ * @returns {string} Next product's ID
+ */
+export const getNextProductId = (id) => {
+  const ids = getIds();
+  const index = ids.indexOf(id);
+
+  return index >= 0 ? ids[index + 1] : undefined;
+};
+
+/**
+ * Get previous product's ID.
+ *
+ * @param {string} id
+ * @returns {string} Previous product's ID
+ */
+export const getPreviousProductId = (id) => {
+  const ids = getIds();
+  const index = ids.indexOf(id);
+
+  return index >= 0 ? ids[index - 1] : undefined;
+};
+
 export const getProduct = (id) => {
   const product = productsService[PRODUCTS].get(id);
 
