@@ -31,6 +31,25 @@ Make sure you have [Xcode](https://itunes.apple.com/us/app/xcode/id497799835?mt=
     $ npm install
     ```
 
+5. Create an API configuration file at _config/index.json_:
+
+    ```shell
+    $ mkdir config
+    $ touch config/index.json
+    ```
+
+    _index.json_ should have should have two properties—`apiKey` and `apiBase`— cooresponding to your
+    API configuration. An example:
+
+    ```json
+    {
+      "apiKey": "key",
+      "apiBase": "https://fully-qualified.domain/path/to/api"
+    }
+    ```
+
+    See _[config/sample.json](./config/sample.json)_ for an example file.
+
 ## Running
 
 Open a terminal and `cd` to the project directory. To start the react-native packager server, run:
