@@ -62,6 +62,32 @@ export const hasLoadedAllProducts = () => !!(
     productsService[PRODUCTS].size
 );
 
+const SCRIPTS_PATTERN = /<script.*?>.*?<\/script.*?>/gi;
+
+/**
+ * Sanitize product values.
+ *
+ * This removes `<script>...</script>` tags in a product's value to prevent
+ * injection attacks when the values are injected into WebViews.
+ *
+ * @todo Strip `style` and `img` tags to prevent potential phishing/counters
+ *
+ * @param {Object} product
+ * @returns {Object} Sanitized product
+ */
+export const sanitizeProduct = product => Object.keys(product).reduce(
+  (memo, key) => {
+    const value = product[key];
+    /* eslint-disable no-param-reassign */
+    memo[key] = typeof value === 'string' ?
+      value.replace(SCRIPTS_PATTERN, '') :
+      value;
+    /* eslint-enable no-param-reassign */
+    return memo;
+  },
+  {}
+);
+
 /**
  * Load the next page of products.
  *
@@ -84,7 +110,11 @@ export const loadProducts = () => {
       productsService[LAST_REQUEST_PAGE] += 1;
 
       products.forEach((product) => {
-        productsService[PRODUCTS].set(product.productId, product);
+        // TODO: Optimize by only sanitizing loaded products' attributes
+        productsService[PRODUCTS].set(
+          product.productId,
+          sanitizeProduct(product)
+        );
       });
 
       return products;

