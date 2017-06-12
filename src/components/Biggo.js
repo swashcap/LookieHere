@@ -135,7 +135,7 @@ export default class Biggo extends Component {
    * @todo Better way to do this? Place in stylesheet?
    *
    * @param {Object} product
-   * @param {string} product.longDescription
+   * @param {string} [product.longDescription]
    * @param {string} product.productImage
    * @param {string} product.productName
    * @param {number} product.reviewCount
@@ -421,9 +421,13 @@ export default class Biggo extends Component {
   }
 }
 
+Biggo.defaultProps = {
+  longDescription: '',
+};
+
 Biggo.propTypes = {
   inStock: PropTypes.bool.isRequired,
-  longDescription: PropTypes.string.isRequired,
+  longDescription: PropTypes.string,
   onBackPress: PropTypes.func.isRequired,
   onNextPress: PropTypes.func.isRequired,
   onPreviousPress: PropTypes.func.isRequired,
