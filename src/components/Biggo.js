@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {
   Animated,
   Image,
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -78,7 +79,12 @@ const styles = StyleSheet.create({
   },
   price: {
     backgroundColor: 'hotpink',
-    bottom: -10,
+
+    /**
+     * @todo Debug view stacking in Android so WebView doesn't layer on top of
+     * price.
+     */
+    bottom: Platform.OS === 'ios' ? -10 : 5,
     color: 'lemonchiffon',
     fontFamily: 'Chalkboard SE',
     fontSize: 24,
