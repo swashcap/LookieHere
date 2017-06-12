@@ -85,9 +85,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: -1,
     lineHeight: 24,
-    paddingTop: 6,
-    paddingRight: 6,
     paddingLeft: 6,
+    paddingRight: 6,
+    paddingTop: 6,
     position: 'absolute',
     right: 5,
     transform: [{ rotate: '5deg' }],
@@ -115,10 +115,28 @@ const styles = StyleSheet.create({
   },
 });
 
+/**
+ * Biggo.
+ * @module
+ *
+ * Displays a single product.
+ */
 export default class Biggo extends Component {
 
-  // TODO: Better way to do this? Place in stylesheet?
-  // TODO: Use WKWebView? https://github.com/facebook/react-native/issues/321
+  /**
+   * Get HTML for the WebView.
+   *
+   * @todo Better way to do this? Place in stylesheet?
+   *
+   * @param {Object} product
+   * @param {string} product.longDescription
+   * @param {string} product.productImage
+   * @param {string} product.productName
+   * @param {number} product.reviewCount
+   * @param {number} product.reviewRating
+   * @param {number} product.shortDescription
+   * @returns {string}
+   */
   static getWebViewHTML({
     longDescription,
     productImage,
@@ -265,6 +283,11 @@ export default class Biggo extends Component {
     }
   }
 
+  /**
+   * Animate 'top' section to expand or collapse.
+   *
+   * @param {number} toValue Value to animate to: either `1` or `0`
+   */
   animateTop(toValue) {
     this.setState({
       isTopAnimated: true,
@@ -280,6 +303,13 @@ export default class Biggo extends Component {
     }));
   }
 
+  /**
+   * Render bottom WebView.
+   *
+   * @todo Use WKWebView? {@link https://github.com/facebook/react-native/issues/321}
+   *
+   * @returns {ReactNative.WebView}
+   */
   renderBottom() {
     const {
       longDescription,
@@ -298,22 +328,25 @@ export default class Biggo extends Component {
       shortDescription,
     });
 
-    /* eslint-disable react/jsx-boolean-value */
     return (
       <WebView
-        bounces={true}
+        bounces
         decelerationRate={'normal'}
         javaScriptEnabled={false}
         onMessage={this.handleWebViewMessage}
         scalesPageToFit={false}
-        scrollEnabled={true}
+        scrollEnabled
         source={{ html }}
         style={styles.bottom}
       />
     );
-    /* eslint-enable react/jsx-boolean-value */
   }
 
+  /**
+   * Render top elements.
+   *
+   * @returns {ReactNative.Animated.View}
+   */
   renderTop() {
     const { inStock, onBackPress, productName, price } = this.props;
     const { topCollapse } = this.state;
@@ -393,3 +426,4 @@ Biggo.propTypes = {
   reviewRating: PropTypes.number.isRequired,
   shortDescription: PropTypes.string.isRequired,
 };
+
