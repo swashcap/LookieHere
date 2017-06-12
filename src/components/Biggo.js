@@ -402,8 +402,8 @@ export default class Biggo extends Component {
           />
           {this.renderTop()}
           <Panonav
-            onPanLeft={onPreviousPress}
-            onPanRight={onNextPress}
+            onPanLeft={onNextPress}
+            onPanRight={onPreviousPress}
           >
             {this.renderBottom()}
           </Panonav>
