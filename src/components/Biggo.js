@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import loadingAnimation3 from '../images/loading-animation-3.gif';
+import Panonav from './Panonav';
 
 const styles = StyleSheet.create({
   backButton: {
@@ -351,6 +352,8 @@ export default class Biggo extends Component {
   }
 
   render() {
+    const { onNextPress, onPreviousPress } = this.props;
+
     return (
       <View style={styles.container}>
         <View style={styles.loading}>
@@ -365,7 +368,12 @@ export default class Biggo extends Component {
             barStyle="light-content"
           />
           {this.renderTop()}
-          {this.renderBottom()}
+          <Panonav
+            onPanLeft={onPreviousPress}
+            onPanRight={onNextPress}
+          >
+            {this.renderBottom()}
+          </Panonav>
         </View>
       </View>
     );
@@ -376,8 +384,8 @@ Biggo.propTypes = {
   inStock: PropTypes.bool.isRequired,
   longDescription: PropTypes.string.isRequired,
   onBackPress: PropTypes.func.isRequired,
-  // onNextPress: PropTypes.func.isRequired,
-  // onPreviousPress: PropTypes.func.isRequired,
+  onNextPress: PropTypes.func.isRequired,
+  onPreviousPress: PropTypes.func.isRequired,
   price: PropTypes.string.isRequired,
   productImage: PropTypes.string.isRequired,
   productName: PropTypes.string.isRequired,
