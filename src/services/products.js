@@ -19,7 +19,7 @@ export default productsService;
  *
  * @returns {string[]}
  */
-const getIds = () => Array.from(productsService[PRODUCTS].keys());
+export const getIds = () => Array.from(productsService[PRODUCTS].keys());
 
 /**
  * Get product's index by ID.
