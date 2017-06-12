@@ -1,9 +1,9 @@
 import fetchProducts from './fetch-products';
 
-export const CURRENT_REQUEST = Symbol('CURRENT_REQUEST');
-export const LAST_REQUEST_PAGE = Symbol('LAST_REQUEST_PAGE');
-export const LAST_RESPONSE_META = Symbol('LAST_RESPONSE_META');
-export const PRODUCTS = Symbol('PRODUCTS');
+export const CURRENT_REQUEST = 'CURRENT_REQUEST';
+export const LAST_REQUEST_PAGE = 'LAST_REQUEST_PAGE';
+export const LAST_RESPONSE_META = 'LAST_RESPONSE_META';
+export const PRODUCTS = 'PRODUCTS';
 
 const productsService = {
   [CURRENT_REQUEST]: null,
