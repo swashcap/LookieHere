@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   Animated,
+  Image,
   StatusBar,
   StyleSheet,
   Text,
@@ -9,6 +10,8 @@ import {
   View,
   WebView,
 } from 'react-native';
+
+import loadingAnimation3 from '../images/loading-animation-3.gif';
 
 const styles = StyleSheet.create({
   backButton: {
@@ -29,8 +32,29 @@ const styles = StyleSheet.create({
     backgroundColor: 'indigo',
     flex: 1,
     flexDirection: 'column',
+    position: 'relative',
+  },
+  content: {
+    flex: 1,
+    position: 'relative',
+    zIndex: 2,
   },
   image: {
+    height: 100,
+    width: 100,
+  },
+  loading: {
+    alignItems: 'center',
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
+    left: 0,
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    zIndex: -1,
+  },
+  loadingImage: {
     height: 100,
     width: 100,
   },
@@ -329,12 +353,20 @@ export default class Biggo extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <StatusBar
-          backgroundColor="indigo"
-          barStyle="light-content"
-        />
-        {this.renderTop()}
-        {this.renderBottom()}
+        <View style={styles.loading}>
+          <Image
+            source={loadingAnimation3}
+            style={styles.loadingImage}
+          />
+        </View>
+        <View style={styles.content}>
+          <StatusBar
+            backgroundColor="indigo"
+            barStyle="light-content"
+          />
+          {this.renderTop()}
+          {this.renderBottom()}
+        </View>
       </View>
     );
   }
