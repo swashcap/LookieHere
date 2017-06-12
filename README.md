@@ -68,7 +68,7 @@ $ react-native run-ios
 
 ## Development Server
 
-This project contains a development server for testing the application without making requests to an external server. To set up, ensure your _config/index.json_ has a `localhost` hostname and open port on your machine. An example:
+This project contains a development server for testing the application without making requests to an external server. Ensure your _config/index.json_ has an accessible hostname (`localhost` works when developing in simulators or emulators) and open port on your machine. An example:
 
 ```json
 {
@@ -82,6 +82,26 @@ The server mimics the API's expected responses, but with random field values sup
 ```shell
 $ npm run server
 ```
+
+Optionally, you can configure builds to access the development server by using your development machine's IP address as the hostname. To look this up on macOS, run:
+
+```shell
+$ ifconfig
+```
+
+Your machine's network-accessible IP address should be under the `en0` interface:
+
+```shell
+#...
+en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
+	ether 20:c9:d0:8a:0a:55
+	inet 192.168.0.111 netmask 0xffffff00 broadcast 192.168.0.255
+	media: autoselect
+	status: active
+#...
+```
+
+(`192.168.0.111` in the above output.)
 
 ## License
 

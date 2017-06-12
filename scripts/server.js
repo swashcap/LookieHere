@@ -49,7 +49,7 @@ registerRoute.attributes = {
 };
 
 server.connection({
-  host: parsedApiBase.hostname,
+  host: '0.0.0.0',
   port: parsedApiBase.port,
   routes: {
     cors: {
