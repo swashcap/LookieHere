@@ -1,24 +1,24 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Image,
   ListView,
   StatusBar,
   StyleSheet,
   View,
 } from 'react-native';
 
-import listBackground from '../images/list-background.png';
 import Mini from './Mini';
+/* eslint-disable import/extensions,import/no-unresolved */
+import MiniListBackground from './MiniListBackground';
+/* eslint-enable import/extensions,import/no-unresolved */
 import MiniListFooter from './MiniListFooter';
 import MiniListLoading from './MiniListLoading';
 
 const SCROLL_VIEW_REF = 'SCROLL_VIEW_REF';
 
 const styles = StyleSheet.create({
-  backgroundImage: {
+  background: {
     height: '100%',
-    resizeMode: 'repeat',
     position: 'absolute',
     width: '100%',
   },
@@ -143,10 +143,7 @@ export default class MiniList extends Component {
           background="cyan"
           barStyle="dark-content"
         />
-        <Image
-          source={listBackground}
-          style={styles.backgroundImage}
-        />
+        <MiniListBackground style={styles.background} />
         <View style={styles.top} />
         <ListView
           dataSource={this.state.dataSource}
