@@ -1,34 +1,34 @@
 import mockProducts from '../mocks/products.json';
-import
-  productsService,
-  {
-    CURRENT_REQUEST,
-    getProduct,
-    getProductIndex,
-    getProducts,
-    hasLoadedAllProducts,
-    LAST_RESPONSE_META,
-    loadProducts,
-    PRODUCTS,
-    sanitizeProduct,
-    getNextProductId,
-    getPreviousProductId,
-    getIds,
-  }
-from '../../src/services/products';
+import {
+  configure,
+  getIds,
+  getNextProductId,
+  getPreviousProductId,
+  getProduct,
+  getProductIndex,
+  getProducts,
+  hasLoadedAllProducts,
+  loadProducts,
+  sanitizeProduct,
+} from '../../src/services/products';
 
-/* eslint-disable import/no-named-as-default-member */
-const addMockProducts = () => {
-  mockProducts.forEach((product) => {
-    productsService[PRODUCTS].set(product.productId, product);
+const reconfigure = () => {
+  configure({
+    // Ensure no mutations to mockProducts:
+    products: new Map(JSON.parse(JSON.stringify(mockProducts)).map(
+      product => [product.productId, product]
+    )),
   });
 };
 
-const removeMockProducts = () => productsService[PRODUCTS].clear();
+const unconfigure = () => {
+  configure({
+    products: null,
+  });
+};
 
 describe('get products', () => {
-  beforeEach(addMockProducts);
-  afterEach(removeMockProducts);
+  beforeEach(reconfigure);
 
   test('gets product index', () => {
     expect(getProductIndex(mockProducts[3].productId)).toBe(3);
@@ -93,24 +93,26 @@ describe('loads products from API', () => {
   test('checks if all products loaded', () => {
     expect(hasLoadedAllProducts()).toBe(false);
 
-    productsService[LAST_RESPONSE_META] = {
+    /* eslint-disable no-underscore-dangle */
+    loadProducts.__lastResponseMeta = {
       totalProducts: 200,
     };
 
     expect(hasLoadedAllProducts()).toBe(false);
 
-    addMockProducts();
+    reconfigure();
 
     expect(hasLoadedAllProducts()).toBe(false);
 
-    productsService[LAST_RESPONSE_META] = {
+    loadProducts.__lastResponseMeta = {
       totalProducts: mockProducts.length,
     };
 
     expect(hasLoadedAllProducts()).toBe(true);
 
-    productsService[LAST_RESPONSE_META] = null;
-    removeMockProducts();
+    loadProducts.__lastResponseMeta = null;
+    /* eslint-enable no-underscore-dangle */
+    unconfigure();
   });
 
   test('locks to  current request', () => {
@@ -118,34 +120,37 @@ describe('loads products from API', () => {
 
     expect.assertions(1);
 
-    productsService[CURRENT_REQUEST] = currentRequest;
+    /* eslint-disable no-underscore-dangle */
+    loadProducts.__currentRequest = currentRequest;
 
     expect(loadProducts()).toBe(currentRequest);
 
-    productsService[CURRENT_REQUEST] = null;
+    loadProducts.__currentRequest = null;
+    /* eslint-disable no-underscore-dangle */
   });
 
   test('empty when all fetched', () => {
     expect.assertions(1);
 
-    addMockProducts();
+    reconfigure();
 
-    productsService[LAST_RESPONSE_META] = {
+    loadProducts.__lastResponseMeta = {
       totalProducts: mockProducts.length,
     };
 
+    /* eslint-enable no-underscore-dangle */
     return loadProducts()
       .then((response) => {
-        productsService[LAST_RESPONSE_META] = null;
-        removeMockProducts();
+        loadProducts.__lastResponseMeta = null;
+        unconfigure();
         expect(response).toEqual([]);
       })
       .catch((error) => {
-        productsService[LAST_RESPONSE_META] = null;
-        removeMockProducts();
+        loadProducts.__lastResponseMeta = null;
+        unconfigure();
         throw error;
       });
+    /* eslint-disable no-underscore-dangle */
   });
 });
-/* eslint-enable import/no-named-as-default-member */
 

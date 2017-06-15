@@ -1,25 +1,28 @@
 import fetchProducts from './fetch-products';
 
-export const CURRENT_REQUEST = 'CURRENT_REQUEST';
-export const LAST_REQUEST_PAGE = 'LAST_REQUEST_PAGE';
-export const LAST_RESPONSE_META = 'LAST_RESPONSE_META';
-export const PRODUCTS = 'PRODUCTS';
+const SCRIPTS_PATTERN = /<script.*?>.*?<\/script.*?>/gi;
 
-const productsService = {
-  [CURRENT_REQUEST]: null,
-  [LAST_REQUEST_PAGE]: 0,
-  [LAST_RESPONSE_META]: null,
-  [PRODUCTS]: new Map(),
+let products = null;
+
+/**
+ * Configure the products service.
+ *
+ * @param {Object} options
+ * @param {string} options.baseURL
+ * @param {Map} options.products
+ */
+export const configure = ({
+  products: productsMap,
+}) => {
+  products = productsMap;
 };
-
-export default productsService;
 
 /**
  * Get products' ordered IDs.
  *
  * @returns {string[]}
  */
-export const getIds = () => Array.from(productsService[PRODUCTS].keys());
+export const getIds = () => Array.from(products.keys());
 
 /**
  * Get product's index by ID.
@@ -29,9 +32,8 @@ export const getIds = () => Array.from(productsService[PRODUCTS].keys());
  * Defaults to the products map's IDs.
  * @returns {number}
  */
-export const getProductIndex = (id, ids) => (
-  (!Array.isArray(ids) ? getIds() : ids).indexOf(id)
-);
+export const getProductIndex = (id, ids) =>
+  (!Array.isArray(ids) ? getIds() : ids).indexOf(id);
 
 /**
  * Get next product's ID.
@@ -60,7 +62,7 @@ export const getPreviousProductId = (id) => {
 };
 
 export const getProduct = (id) => {
-  const product = productsService[PRODUCTS].get(id);
+  const product = products.get(id);
 
   if (!product) {
     return product;
@@ -79,19 +81,11 @@ export const getProduct = (id) => {
   );
 };
 
-export const getProducts = () => Array.from(productsService[PRODUCTS].values());
-
-export const hasLoadedAllProducts = () => !!(
-  productsService[LAST_RESPONSE_META] &&
-  productsService[PRODUCTS].size &&
-  productsService[LAST_RESPONSE_META].totalProducts <=
-    productsService[PRODUCTS].size
-);
-
-const SCRIPTS_PATTERN = /<script.*?>.*?<\/script.*?>/gi;
+export const getProducts = () => Array.from(products.values());
 
 /**
  * Sanitize product values.
+ * @private
  *
  * This removes `<script>...</script>` tags in a product's value to prevent
  * injection attacks when the values are injected into WebViews.
@@ -117,35 +111,85 @@ export const sanitizeProduct = product => Object.keys(product).reduce(
 /**
  * Load the next page of products.
  *
- * @returns {Promise<Array,Error>}
+ * @returns {Promise<Object[],Error>}
  */
-export const loadProducts = () => {
-  if (productsService[CURRENT_REQUEST]) {
-    return productsService[CURRENT_REQUEST];
-  } else if (hasLoadedAllProducts()) {
-    return Promise.resolve([]);
-  }
+export const loadProducts = (() => {
+  let currentRequest = null;
+  let lastRequestPage = 0;
+  let lastResponseMeta = null;
 
-  productsService[CURRENT_REQUEST] = fetchProducts(
-    productsService[LAST_REQUEST_PAGE] + 1,
-    30
-  )
-    .then(({ pageNumber, products, totalProducts }) => {
-      productsService[LAST_RESPONSE_META] = { pageNumber, totalProducts };
-      productsService[CURRENT_REQUEST] = null;
-      productsService[LAST_REQUEST_PAGE] += 1;
+  const fn = () => {
+    if (currentRequest) {
+      return currentRequest;
+    /* eslint-disable no-use-before-define */
+    } else if (hasLoadedAllProducts()) {
+    /* eslint-enable no-use-before-define */
+      return Promise.resolve([]);
+    }
 
-      products.forEach((product) => {
-        // TODO: Optimize by only sanitizing loaded products' attributes
-        productsService[PRODUCTS].set(
-          product.productId,
-          sanitizeProduct(product)
-        );
+    currentRequest = fetchProducts(lastRequestPage + 1, 30)
+      .then(({ pageNumber, products: newProducts, totalProducts }) => {
+        lastResponseMeta = { pageNumber, totalProducts };
+        currentRequest = null;
+        lastRequestPage += 1;
+
+        newProducts.forEach((product) => {
+          // TODO: Optimize by only sanitizing loaded products' attributes
+          products.set(
+            product.productId,
+            sanitizeProduct(product)
+          );
+        });
+
+        // TODO: Return sanitized products
+        return newProducts;
       });
 
-      return products;
-    });
+    return currentRequest;
+  };
 
-  return productsService[CURRENT_REQUEST];
-};
+  Object.defineProperties(fn, {
+    __currentRequest: {
+      get() {
+        return currentRequest;
+      },
+      set(value) {
+        currentRequest = value;
+        return value;
+      },
+      writeable: true,
+    },
+    __lastRequestPage: {
+      get() {
+        return lastRequestPage;
+      },
+      set(value) {
+        lastRequestPage = value;
+        return value;
+      },
+      writeable: true,
+    },
+    __lastResponseMeta: {
+      get() {
+        return lastResponseMeta;
+      },
+      set(value) {
+        lastResponseMeta = value;
+        return value;
+      },
+      writeable: true,
+    },
+  });
 
+  return fn;
+})();
+
+/* eslint-disable no-underscore-dangle */
+export function hasLoadedAllProducts() {
+  return !!(
+    loadProducts.__lastResponseMeta &&
+    products.size &&
+    loadProducts.__lastResponseMeta.totalProducts <= products.size
+  );
+}
+/* eslint-enable no-underscore-dangle */

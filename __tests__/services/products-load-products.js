@@ -5,7 +5,10 @@
 
 const fetchProducts = require('../../src/services/fetch-products.js');
 const mockProducts = require('../mocks/products.json');
-const productsService = require('../../src/services/products.js');
+const {
+  configure: configureProductsService,
+  loadProducts,
+} = require('../../src/services/products.js');
 
 const pageNumber = 888;
 const totalProducts = mockProducts.length * 2;
@@ -16,6 +19,9 @@ const fetchProductsMock = jest.fn(() => Promise.resolve({
   totalProducts,
 }));
 const originalDefault = fetchProducts.default;
+const products = new Map();
+
+configureProductsService({ products });
 
 beforeAll(() => {
   fetchProducts.default = fetchProductsMock;
@@ -24,27 +30,25 @@ beforeAll(() => {
 test('loads products', () => {
   expect.assertions(6);
 
-  return productsService.loadProducts()
+  return loadProducts()
     .then((response) => {
       expect(response).toEqual(mockProducts);
-      expect(productsService.default[productsService.LAST_RESPONSE_META])
+      /* eslint-disable no-underscore-dangle */
+      expect(loadProducts.__lastResponseMeta)
         .toEqual({
           pageNumber,
           totalProducts,
         });
-      expect(
-        Array.from(productsService.default[productsService.PRODUCTS].values())
-      )
-        .toEqual(mockProducts);
-      expect(productsService.default[productsService.LAST_REQUEST_PAGE])
-        .toBe(1);
-      expect(productsService.default[productsService.CURRENT_REQUEST])
-        .toBeNull();
+      expect(Array.from(products.values())).toEqual(mockProducts);
+      expect(loadProducts.__lastRequestPage).toBe(1);
+      expect(loadProducts.__currentRequest).toBeNull();
+      /* eslint-enable no-underscore-dangle */
       expect(fetchProductsMock).toHaveBeenCalled();
     });
 });
 
 afterAll(() => {
   fetchProducts.default = originalDefault;
+  products.clear();
 });
 

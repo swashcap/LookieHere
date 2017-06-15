@@ -6,6 +6,7 @@ import MiniList from './components/MiniList';
 import ErrorMessage from './components/ErrorMessage';
 
 import {
+  configure as configureProductsService,
   getIds,
   getNextProductId,
   getPreviousProductId,
@@ -15,6 +16,8 @@ import {
   hasLoadedAllProducts,
   loadProducts,
 } from './services/products';
+
+configureProductsService({ products: new Map() });
 
 export default class App extends Component {
   constructor(props) {
