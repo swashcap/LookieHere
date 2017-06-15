@@ -1,17 +1,24 @@
 /* global fetch */
-import config from '../../config/index.json';
 
-const BASE_URL = `${config.apiBase}/${config.apiKey}`;
+/**
+ * Fetch products from a URL.
+ * @module
+ *
+ * @param {string} url URL to fetch
+ * @param {string} sanitizedURL URL to log if an error occurs
+ * @returns {Promise}
+ */
+export default (url, sanitizedURL) => fetch(url).then((response) => {
+  if (!response.ok) {
+    throw new Error(
+      `Fetch error:
+  URL: ${sanitizedURL}
+  Status: ${response.status}
+  Message: ${response.statusText}
+`
+    );
+  }
 
-export default (pageNumber, pageCount) => fetch(
-  `${BASE_URL}/${pageNumber}/${pageCount}`
-)
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(
-        `Products fetch error ${response.status}: ${response.statusText}`
-      );
-    }
+  return response.json();
+});
 
-    return response.json();
-  });

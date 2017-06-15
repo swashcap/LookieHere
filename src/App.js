@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Biggo from './components/Biggo';
+import { apiBase, apiKey } from '../config/index.json';
 import LoadingScreen from './components/LoadingScreen';
 import MiniList from './components/MiniList';
 import ErrorMessage from './components/ErrorMessage';
@@ -17,7 +18,11 @@ import {
   loadProducts,
 } from './services/products';
 
-configureProductsService({ products: new Map() });
+configureProductsService({
+  apiBase,
+  apiKey,
+  products: new Map(),
+});
 
 export default class App extends Component {
   constructor(props) {

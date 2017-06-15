@@ -10,6 +10,8 @@ const {
   loadProducts,
 } = require('../../src/services/products.js');
 
+const apiBase = 'http://localhot:stuff/suppp';
+const apiKey = 'so-essential-to-requests';
 const pageNumber = 888;
 const totalProducts = mockProducts.length * 2;
 
@@ -21,7 +23,11 @@ const fetchProductsMock = jest.fn(() => Promise.resolve({
 const originalDefault = fetchProducts.default;
 const products = new Map();
 
-configureProductsService({ products });
+configureProductsService({
+  apiBase,
+  apiKey,
+  products,
+});
 
 beforeAll(() => {
   fetchProducts.default = fetchProductsMock;
@@ -43,7 +49,9 @@ test('loads products', () => {
       expect(loadProducts.__lastRequestPage).toBe(1);
       expect(loadProducts.__currentRequest).toBeNull();
       /* eslint-enable no-underscore-dangle */
-      expect(fetchProductsMock).toHaveBeenCalled();
+      expect(fetchProductsMock.mock.calls[0][0]).toMatch(
+        new RegExp(`^${apiBase}/${apiKey}/\\d/\\d+$`)
+      );
     });
 });
 

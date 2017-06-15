@@ -2,18 +2,25 @@ import fetchProducts from './fetch-products';
 
 const SCRIPTS_PATTERN = /<script.*?>.*?<\/script.*?>/gi;
 
+let apiBase = null;
+let apiKey = null;
 let products = null;
 
 /**
  * Configure the products service.
  *
  * @param {Object} options
- * @param {string} options.baseURL
+ * @param {string} options.apiBase
+ * @param {string} options.apiKey
  * @param {Map} options.products
  */
 export const configure = ({
+  apiBase: base,
+  apiKey: key,
   products: productsMap,
 }) => {
+  apiBase = base;
+  apiKey = key;
   products = productsMap;
 };
 
@@ -127,7 +134,10 @@ export const loadProducts = (() => {
       return Promise.resolve([]);
     }
 
-    currentRequest = fetchProducts(lastRequestPage + 1, 30)
+    currentRequest = fetchProducts(
+      `${apiBase}/${apiKey}/${lastRequestPage + 1}/30`,
+      `${apiBase}/.../${lastRequestPage + 1}/30`
+    )
       .then(({ pageNumber, products: newProducts, totalProducts }) => {
         lastResponseMeta = { pageNumber, totalProducts };
         currentRequest = null;
