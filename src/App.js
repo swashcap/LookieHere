@@ -8,13 +8,10 @@ import ErrorMessage from './components/ErrorMessage';
 
 import {
   configure as configureProductsService,
-  getIds,
-  getNextProductId,
-  getPreviousProductId,
   getProduct,
+  getProductIdIterator,
   getProductIndex,
   getProducts,
-  hasLoadedAllProducts,
   loadProducts,
 } from './services/products';
 
@@ -33,7 +30,8 @@ export default class App extends Component {
       isLoading: true,
       miniScrollOffset: null,
       products: getProducts(), // Returns an array
-      productId: null,
+      product: null,
+      productIterator: null,
       route: 'loading',
     };
 
@@ -44,7 +42,6 @@ export default class App extends Component {
     this.navigateToMini = this.navigateToMini.bind(this);
     this.navigateToNextProduct = this.navigateToNextProduct.bind(this);
     this.navigateToPreviousProduct = this.navigateToPreviousProduct.bind(this);
-    this.navigateToProduct = this.navigateToProduct.bind(this);
   }
 
   componentDidMount() {
@@ -89,17 +86,32 @@ export default class App extends Component {
       .catch(this.displayError);
   }
 
-  navigateToBiggo(productId) {
-    this.setState({
-      productId,
+  navigateToBiggo(product) {
+    let productIterator;
+
+    // `getProductIdIterator` throws if `product` is bad
+    try {
+      productIterator = getProductIdIterator(product);
+    } catch (error) {
+      return this.displayError(error);
+    }
+
+    return this.setState({
+      product: productIterator.initial,
+      productIterator,
       route: 'biggo',
     });
   }
 
   navigateToMini() {
-    const { productId } = this.state;
+    const {
+      product: {
+        value: productId,
+      },
+    } = this.state;
     const newState = {
-      productId: null,
+      product: null,
+      productIterator: null,
       route: 'mini',
     };
 
@@ -121,60 +133,16 @@ export default class App extends Component {
     this.setState(newState);
   }
 
-  /**
-   * Navigate to the next/previous product.
-   *
-   * @todo Expose products as double linked list for Biggo?
-   *
-   * @param {Function} getNewProductId
-   * @param {boolean} [throwError=false] Throw an error if `getNewProductId`
-   * fails.
-   */
-  navigateToProduct(getNewProductId, throwError = false) {
-    const { productId } = this.state;
-    const newProductId = getNewProductId(productId);
-
-    if (newProductId) {
-      this.navigateToBiggo(newProductId);
-    } else if (!hasLoadedAllProducts()) {
-      loadProducts()
-        .then((loadedProducts) => {
-          this.setState({
-            products: this.state.products.concat(loadedProducts),
-          });
-          return this.navigateToProduct(getNewProductId, true);
-        })
-        .catch(this.displayError);
-    } else {
-      const ids = getIds();
-      const lastId = ids[ids.length - 1];
-
-      if (productId === lastId) {
-        // No `newProductId` and all have loaded: loop to beginning
-        this.navigateToBiggo(ids[0]);
-      } else if (productId === ids[0]) {
-        // Loop to end
-        this.navigateToBiggo(lastId);
-      } else {
-        const error = new Error(
-          `Could not find new product ID from ${newProductId}`
-        );
-
-        if (throwError) {
-          throw error;
-        } else {
-          console.error(error); // eslint-disable-line no-console
-        }
-      }
-    }
-  }
-
   navigateToNextProduct() {
-    return this.navigateToProduct(getNextProductId);
+    this.setState({
+      product: this.state.productIterator.next(),
+    });
   }
 
   navigateToPreviousProduct() {
-    return this.navigateToProduct(getPreviousProductId);
+    this.setState({
+      product: this.state.productIterator.previous(),
+    });
   }
 
   render() {
@@ -183,7 +151,7 @@ export default class App extends Component {
       isLoading,
       miniScrollOffset,
       products,
-      productId,
+      product,
       route,
     } = this.state;
 
@@ -210,10 +178,16 @@ export default class App extends Component {
       case 'biggo':
         return (
           <Biggo
-            onBackPress={this.navigateToMini}
-            onNextPress={this.navigateToNextProduct}
-            onPreviousPress={this.navigateToPreviousProduct}
-            {...getProduct(productId)}
+            onNavigateBack={this.navigateToMini}
+            onNavigateNext={product.hasNext ?
+              this.navigateToNextProduct :
+              undefined
+            }
+            onNavigatePrevious={product.hasPrevious ?
+              this.navigateToPreviousProduct :
+              undefined
+            }
+            {...getProduct(product.value)}
           />
         );
       default:

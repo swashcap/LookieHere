@@ -43,6 +43,58 @@ export const getProductIndex = (id, ids) =>
   (!Array.isArray(ids) ? getIds() : ids).indexOf(id);
 
 /**
+ * Get a product iterator.
+ *
+ * Use an iterator-like interface for moving forward or backward through product
+ * IDs in the order they were returned via the API.
+ * {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterator_protocol}
+ *
+ * @example
+ * const myIterator = getProductIdIterator('102');
+ *
+ * console.log(myIterator.next().value); // '103'
+ * console.log(myIterator.next().value); // '104'
+ * console.log(myIterator.next().done); // true
+ * console.log(myIterator.previous().value); // '104'
+ *
+ * @param {string} id Initial product ID
+ * @returns {Object} Iterator-like interface for proceeding through product IDs
+ */
+export const getProductIdIterator = (id) => {
+  const ids = getIds();
+  let currentIndex = ids.indexOf(id);
+
+  if (currentIndex < 0) {
+    throw new Error(`Product ID "${id}" not found`);
+  }
+
+  const getValue = incrementor => () => {
+    if (
+      currentIndex + incrementor < ids.length &&
+      currentIndex + incrementor >= 0
+    ) {
+      currentIndex += incrementor;
+    }
+
+    return {
+      hasNext: currentIndex + incrementor < ids.length,
+      hasPrevious: currentIndex + incrementor >= 0,
+      value: ids[currentIndex],
+    };
+  };
+
+  return {
+    initial: {
+      hasNext: currentIndex + 1 < ids.length,
+      hasPrevious: currentIndex - 1 >= 0,
+      value: id,
+    },
+    next: getValue(1),
+    previous: getValue(-1),
+  };
+};
+
+/**
  * Get next product's ID.
  *
  * @param {string} id

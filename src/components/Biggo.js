@@ -356,7 +356,7 @@ export default class Biggo extends Component {
    * @returns {ReactNative.Animated.View}
    */
   renderTop() {
-    const { inStock, onBackPress, productName, price } = this.props;
+    const { inStock, onNavigateBack, productName, price } = this.props;
     const { topCollapse } = this.state;
     const stock = !inStock ?
       <Text style={styles.stock}>Out of Stock</Text> :
@@ -378,7 +378,7 @@ export default class Biggo extends Component {
 
     return (
       <Animated.View style={topStyle}>
-        <TouchableWithoutFeedback onPress={onBackPress}>
+        <TouchableWithoutFeedback onPress={onNavigateBack}>
           <View style={styles.backButton}>
             <Text style={styles.backButtonText}>&lt; Back</Text>
           </View>
@@ -393,7 +393,7 @@ export default class Biggo extends Component {
   }
 
   render() {
-    const { onNextPress, onPreviousPress } = this.props;
+    const { onNavigateNext, onNavigatePrevious } = this.props;
 
     return (
       <View style={styles.container}>
@@ -410,8 +410,8 @@ export default class Biggo extends Component {
           />
           {this.renderTop()}
           <Panonav
-            onPanLeft={onNextPress}
-            onPanRight={onPreviousPress}
+            onPanLeft={onNavigateNext}
+            onPanRight={onNavigatePrevious}
           >
             {this.renderBottom()}
           </Panonav>
@@ -423,14 +423,16 @@ export default class Biggo extends Component {
 
 Biggo.defaultProps = {
   longDescription: '',
+  onNavigateNext: undefined,
+  onNavigatePrevious: undefined,
 };
 
 Biggo.propTypes = {
   inStock: PropTypes.bool.isRequired,
   longDescription: PropTypes.string,
-  onBackPress: PropTypes.func.isRequired,
-  onNextPress: PropTypes.func.isRequired,
-  onPreviousPress: PropTypes.func.isRequired,
+  onNavigateBack: PropTypes.func.isRequired,
+  onNavigateNext: PropTypes.func,
+  onNavigatePrevious: PropTypes.func,
   price: PropTypes.string.isRequired,
   productImage: PropTypes.string.isRequired,
   productName: PropTypes.string.isRequired,

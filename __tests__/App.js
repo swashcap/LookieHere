@@ -18,8 +18,6 @@ jest.mock('../src/components/Biggo');
 jest.mock('../src/components/LoadingScreen');
 jest.mock('../src/components/MiniList');
 
-const last = arr => arr[arr.length - 1];
-
 describe('basic component', () => {
   test('renders', () => {
     // TODO: Determine how to test after initial `componentDidMount` fires
@@ -96,10 +94,12 @@ describe('navigation', () => {
 
     App.prototype.navigateToBiggo.call(that, productId);
 
-    expect(that.setState.mock.calls[0][0]).toEqual({
-      productId,
-      route: 'biggo',
-    });
+    const newState = that.setState.mock.calls[0][0];
+
+    expect(newState.product.value).toBe(productId);
+    expect(newState.productIterator.next).toBeInstanceOf(Function);
+    expect(newState.productIterator.previous).toBeInstanceOf(Function);
+    expect(newState.route).toBe('biggo');
   });
 
   test('navigates to list', () => {
@@ -110,21 +110,26 @@ describe('navigation', () => {
     App.prototype.navigateToMini.call(Object.assign(
       {
         state: {
-          productId: 'rando-identifier-is-baller',
+          product: {
+            value: 'rando-identifier-is-baller',
+          },
         },
       },
       that
     ));
 
     expect(that.setState.mock.calls[0][0]).toEqual({
-      productId: null,
+      product: null,
+      productIterator: null,
       route: 'mini',
     });
 
     App.prototype.navigateToMini.call(Object.assign(
       {
         state: {
-          productId: mockProducts[2].productId,
+          product: {
+            value: mockProducts[2].productId,
+          },
         },
       },
       that
@@ -132,80 +137,45 @@ describe('navigation', () => {
 
     expect(that.setState.mock.calls[1][0]).toEqual({
       miniScrollOffset: 200,
-      productId: null,
+      product: null,
+      productIterator: null,
       route: 'mini',
     });
   });
 
-  describe('directional navigation', () => {
+  test('next', () => {
     const that = {
-      navigateToBiggo: jest.fn(),
-      navigateToProduct: jest.fn(),
       setState: jest.fn(),
+      state: {
+        productIterator: {
+          next: jest.fn(() => 'wat'),
+        },
+      },
     };
 
-    beforeEach(() => Object.values(that).forEach(
-      mockFn => mockFn.mockClear()
-    ));
+    App.prototype.navigateToNextProduct.call(that);
 
-    test('has product ID', () => {
-      const productId = 'a-most-productive-id';
-      const newProductId = 'bigger-faster-stronger';
-      const getNewProductIdMock = jest.fn(() => newProductId);
-
-      App.prototype.navigateToProduct.call(
-        Object.assign(
-          {
-            state: {
-              productId,
-            },
-          },
-          that
-        ),
-        getNewProductIdMock
-      );
-
-      expect(getNewProductIdMock.mock.calls[0][0])
-        .toBe(productId);
-      expect(that.navigateToBiggo.mock.calls[0][0])
-        .toBe(newProductId);
+    expect(that.state.productIterator.next).toHaveBeenCalled();
+    expect(that.setState).toHaveBeenCalledWith({
+      product: 'wat',
     });
+  });
 
-    test.skip('loads products', () => {
-    });
+  test('previous', () => {
+    const that = {
+      setState: jest.fn(),
+      state: {
+        productIterator: {
+          previous: jest.fn(() => 'waaat'),
+        },
+      },
+    };
 
-    test('loops when at end', () => {
-      App.prototype.navigateToProduct.call(
-        Object.assign(
-          {
-            state: {
-              productId: last(mockProducts).productId,
-            },
-          },
-          that
-        ),
-        () => undefined
-      );
+    App.prototype.navigateToPreviousProduct.call(that);
 
-      expect(that.navigateToBiggo.mock.calls[0][0])
-        .toBe(mockProducts[0].productId);
-    });
-
-    test('loops when at beginning', () => {
-      App.prototype.navigateToProduct.call(
-        Object.assign(
-          {
-            state: {
-              productId: mockProducts[0].productId,
-            },
-          },
-          that
-        ),
-        () => undefined
-      );
-
-      expect(that.navigateToBiggo.mock.calls[0][0])
-        .toBe(last(mockProducts).productId);
+    expect(that.state.productIterator.previous).toHaveBeenCalled();
+    expect(that.setState).toHaveBeenCalledWith({
+      product: 'waaat',
     });
   });
 });

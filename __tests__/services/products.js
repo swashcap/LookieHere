@@ -2,9 +2,8 @@ import mockProducts from '../mocks/products.json';
 import {
   configure,
   getIds,
-  getNextProductId,
-  getPreviousProductId,
   getProduct,
+  getProductIdIterator,
   getProductIndex,
   getProducts,
   hasLoadedAllProducts,
@@ -51,13 +50,6 @@ describe('get products', () => {
 
   test('gets all product IDs', () => {
     expect(getIds()).toEqual(mockProducts.map(({ productId }) => productId));
-  });
-
-  test('ordered product IDs', () => {
-    expect(getNextProductId(mockProducts[1].productId))
-      .toBe(mockProducts[2].productId);
-    expect(getPreviousProductId(mockProducts[1].productId))
-      .toBe(mockProducts[0].productId);
   });
 
   test('sanitizes product values', () => {
@@ -151,6 +143,77 @@ describe('loads products from API', () => {
         throw error;
       });
     /* eslint-disable no-underscore-dangle */
+  });
+});
+
+describe('product ID iterator', () => {
+  beforeEach(reconfigure);
+  afterEach(unconfigure);
+
+  test('throws with bad product ID', () => {
+    expect(getProductIdIterator.bind(null, 'wat')).toThrow(/wat/);
+  });
+
+  test('outputs initial', () => {
+    expect(getProductIdIterator(mockProducts[0].productId).initial).toEqual({
+      hasNext: true,
+      hasPrevious: false,
+      value: mockProducts[0].productId,
+    });
+    expect(getProductIdIterator(mockProducts[1].productId).initial).toEqual({
+      hasNext: true,
+      hasPrevious: true,
+      value: mockProducts[1].productId,
+    });
+    expect(
+      getProductIdIterator(mockProducts[mockProducts.length - 1].productId)
+        .initial
+    )
+      .toEqual({
+        hasNext: false,
+        hasPrevious: true,
+        value: mockProducts[mockProducts.length - 1].productId,
+      });
+  });
+
+  test('iterates to next', () => {
+    const myIterator = getProductIdIterator(mockProducts[1].productId);
+
+    expect(myIterator.next()).toEqual({
+      hasNext: true,
+      hasPrevious: true,
+      value: mockProducts[2].productId,
+    });
+    expect(myIterator.next()).toEqual({
+      hasNext: false,
+      hasPrevious: true,
+      value: mockProducts[3].productId,
+    });
+    expect(myIterator.next()).toEqual({
+      hasNext: false,
+      hasPrevious: true,
+      value: mockProducts[3].productId,
+    });
+  });
+
+  test('iterates to previous', () => {
+    const myIterator = getProductIdIterator(mockProducts[2].productId);
+
+    expect(myIterator.previous()).toEqual({
+      hasNext: true,
+      hasPrevious: true,
+      value: mockProducts[1].productId,
+    });
+    expect(myIterator.previous()).toEqual({
+      hasNext: true,
+      hasPrevious: false,
+      value: mockProducts[0].productId,
+    });
+    expect(myIterator.previous()).toEqual({
+      hasNext: true,
+      hasPrevious: false,
+      value: mockProducts[0].productId,
+    });
   });
 });
 

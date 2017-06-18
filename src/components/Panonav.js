@@ -99,30 +99,33 @@ export default class Panonav extends Component {
    * @param {Object} gestureState
    */
   onPanResponderRelease(event, gestureState) {
+    const { onPanLeft, onPanRight } = this.props;
+    const { pan } = this.state;
+
     if (Math.abs(gestureState.dx) > windowWidth * 0.25) {
-      if (gestureState.dx > 0) {
-        Animated.spring(this.state.pan, {
+      if (onPanRight && gestureState.dx > 0) {
+        return Animated.spring(pan, {
           toValue: {
             x: 2 * windowWidth,
             y: 0,
           },
-        }).start(this.props.onPanRight);
-      } else {
-        Animated.spring(this.state.pan, {
+        }).start(onPanRight);
+      } else if (onPanLeft && gestureState.dx < 0) {
+        return Animated.spring(pan, {
           toValue: {
             x: -2 * windowWidth,
             y: 0,
           },
-        }).start(this.props.onPanLeft);
+        }).start(onPanLeft);
       }
-    } else {
-      Animated.spring(this.state.pan, {
-        toValue: {
-          x: 0,
-          y: 0,
-        },
-      }).start();
     }
+
+    return Animated.spring(pan, {
+      toValue: {
+        x: 0,
+        y: 0,
+      },
+    }).start();
   }
 
   render() {
@@ -150,9 +153,14 @@ export default class Panonav extends Component {
   }
 }
 
+Panonav.defaultProps = {
+  onPanLeft: undefined,
+  onPanRight: undefined,
+};
+
 Panonav.propTypes = {
   children: PropTypes.element.isRequired,
-  onPanLeft: PropTypes.func.isRequired,
-  onPanRight: PropTypes.func.isRequired,
+  onPanLeft: PropTypes.func,
+  onPanRight: PropTypes.func,
 };
 

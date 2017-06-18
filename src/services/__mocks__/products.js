@@ -8,6 +8,17 @@ products.getPreviousProductId = jest.fn(() => undefined);
 products.getProduct = jest.fn(id => mockProducts.find(
   ({ productId }) => productId === id
 ));
+products.getProductIdIterator = jest.fn(id => ({
+  initial: {
+    hasNext: true,
+    hasPrevious: true,
+    value: id,
+  },
+  next() {
+  },
+  previous() {
+  },
+}));
 products.getProductIndex = jest.fn(id => mockProducts.findIndex(
   ({ productId }) => productId === id
 ));
